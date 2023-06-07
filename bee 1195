@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+
+
+struct abb	{
+    int valor;
+    struct abb *esq;			
+	struct abb *dir;
+};
+typedef struct abb TArvore;
+
+int tipo;
+
+TArvore * procuraPai(TArvore *r, int v){
+    if(r == NULL)
+	/* se Arvore vazia */
+		return NULL;
+	else
+		if(v <= r->valor)
+		/* Novo nó deve ficar a esquerda de r */
+			if(r->esq == NULL)
+				return r;
+			else
+				return procuraPai(r->esq, v);
+		else
+		/* Novo nó deve ficar a direita de r */
+			if(r->dir == NULL)
+				return r;
+			else
+				return procuraPai(r->dir, v);
+}
+
+int Imprime(TArvore *r){
+	if(r != NULL){
+		if(tipo == 1){
+			printf(" %d", r->valor);
+			Imprime(r->esq);
+			Imprime(r->dir);
+		}
+		if(tipo == 2){
+			Imprime(r->esq);
+			printf(" %d", r->valor);
+			Imprime(r->dir);
+		}
+		if(tipo == 3){
+			Imprime(r->esq);
+			Imprime(r->dir);
+			printf(" %d", r->valor);
+		}
+	}
+
+	return 0;
+}
+
+int main(){
+    TArvore *raiz, *pai, *aux;
+	int Tam, casos, c, d, no;
+
+	raiz = NULL;
+	scanf("%d", &casos);
+
+	for(c=1; c<=casos; c++){
+		raiz = NULL;
+
+		scanf("%d", &Tam);
+		for(d=0; d<Tam; d++){
+			scanf("%d", &no);
+
+			aux = (TArvore *) malloc(sizeof(TArvore));
+			aux->valor = no;
+			aux->esq = NULL;
+			aux->dir = NULL;
+
+			pai = procuraPai(raiz, no);
+			if(pai == NULL)
+				raiz = aux;
+			else
+				if(no <= pai->valor)
+					pai->esq = aux;
+				else
+					pai->dir = aux;
+		}
+
+		printf("Case %d:", c);
+
+		printf("\nPre.:");
+		tipo = 1;
+		Imprime(raiz);
+
+		printf("\nIn..:");
+		tipo = 2;
+		Imprime(raiz);
+
+		printf("\nPost:");
+		tipo = 3;
+		Imprime(raiz);
+
+		printf("\n\n");
+
+	}
+
+	return 0;
+}
