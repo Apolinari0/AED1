@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct node {
+    char word[201];
+    struct node* left;
+    struct node* right;
+} Node;
+
+Node* createNode(char word[]) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    strcpy(newNode->word, word);
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+Node* insertNode(Node* root, char word[]) {
+    if (root == NULL) {
+        return createNode(word);
+    }
+
+    int comparison = strcasecmp(word, root->word);
+    if (comparison < 0) {
+        root->left = insertNode(root->left, word);
+    } else if (comparison > 0) {
+        root->right = insertNode(root->right, word);
+    }
+
+    return root;
+}
+
+void printBST(Node* root) {
+    if (root != NULL) {
+        printBST(root->left);
+        printf("%s\n", root->word);
+        printBST(root->right);
+    }
+}
+
+void freeBST(Node* root) {
+    if (root != NULL) {
+        freeBST(root->left);
+        freeBST(root->right);
+        free(root);
+    }
+}
+
+int main() {
+    Node* root = NULL;
+    char line[201];
+
+    while (fgets(line, sizeof(line), stdin) != NULL) {
+        int i = 0;
+        int j = 0;
+        char word[201];
+
+        while (line[i] != '\0') {
+            char character = tolower(line[i]);
+
+            if (isalpha(character)) {
+                word[j++] = character;
+            } else if (j > 0) {
+                word[j] = '\0';
+                root = insertNode(root, word);
+                j = 0;
+            }
+
+            i++;
+        }
+
+        if (j > 0) {
+            word[j] = '\0';
+            root = insertNode(root, word);
+        }
+    }
+
+    printBST(root);
+    freeBST(root);
+
+    return 0;
+}
